@@ -193,24 +193,29 @@ void MainWindow::on_buttonGo_clicked()
     if(resultFullPath.isEmpty()) resultFullPath=ui->lineResultPath->text();
     save2file(resultFullPath);
 
-    generateQch();
+    dstFullPath = ui->lineUrl->text()+QDir::separator()+"opencv.qch";
 
-    QMessageBox::information(this,tr("Tip"),tr("All operation has been done!\nDo you want to edit it?"),QMessageBox::Ok|QMessageBox::Cancel);
+    bool isOk = generateQch();
+    if(isOk){
+        QMessageBox::information(this,tr("Tip"),tr("All operation has been done!\nDo you want to edit it?"),QMessageBox::Ok|QMessageBox::Cancel);
+    }else{
+        QMessageBox::information(this,tr("Warning"),"Error");
+    }
 }
 
 void MainWindow::on_buttonOpen_clicked()
 {
     ui->lineResultPath->clear();
     QString resultPath = QFileDialog::getOpenFileName(this,tr("Open"),fileFullPath);
-    if(resultPath.isEmpty()) return;
-    resultFullPath = resultPath;
-    ui->lineResultPath->setText(resultPath);
+    if(resultPath.isEmpty()) return;//没有选择就退出
+    resultFullPath = resultPath;//全局变量，保存文件的时候会用到
+    ui->lineResultPath->setText(resultPath);//显示在界面上
 }
 
 void MainWindow::on_buttonFolder_clicked()
 {
     basePath = QFileDialog::getExistingDirectory(this,tr("Open"),fileFullPath);
-    if(basePath.isEmpty()) return;
-    ui->lineUrl->setText(basePath);
-    ui->lineResultPath->setText(basePath);
+    if(basePath.isEmpty()) return;//如果没有选择文件夹就退出
+    ui->lineUrl->setText(basePath);//将获取的文件夹地址显示出来
+    ui->lineResultPath->setText(basePath);//默认*.qch文件输出位置与源文件同位置
 }
