@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>800</width>
-    <height>467</height>
+    <width>639</width>
+    <height>580</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -30,9 +30,6 @@
     <property name="spacing">
      <number>1</number>
     </property>
-    <item row="3" column="0" colspan="4">
-     <widget class="QPlainTextEdit" name="textResult"/>
-    </item>
     <item row="2" column="1">
      <widget class="QLineEdit" name="lineNamespace"/>
     </item>
@@ -77,12 +74,15 @@
       </property>
      </widget>
     </item>
-    <item row="4" column="3">
+    <item row="2" column="3">
      <widget class="QPushButton" name="buttonGo">
       <property name="text">
        <string>Go</string>
       </property>
      </widget>
+    </item>
+    <item row="3" column="0" colspan="4">
+     <widget class="QTreeView" name="treeView"/>
     </item>
    </layout>
   </widget>
@@ -91,25 +91,20 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>800</width>
-     <height>28</height>
+     <width>639</width>
+     <height>22</height>
     </rect>
    </property>
-   <widget class="QMenu" name="menu_File">
-    <property name="title">
-     <string>&amp;File</string>
-    </property>
-    <addaction name="actionExit"/>
-   </widget>
    <widget class="QMenu" name="menu_Help">
     <property name="title">
-     <string>&amp;Help</string>
+     <string>&amp;Actions</string>
     </property>
     <addaction name="actionAbout_Qt"/>
     <addaction name="actionAbout"/>
     <addaction name="actionIndex"/>
+    <addaction name="separator"/>
+    <addaction name="actionExit"/>
    </widget>
-   <addaction name="menu_File"/>
    <addaction name="menu_Help"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>

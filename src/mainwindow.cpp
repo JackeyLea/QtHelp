@@ -4,6 +4,7 @@
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
+    , treeModel(new QStandardItemModel(ui->treeView))
 {
     ui->setupUi(this);
     fileFullPath = QDir::currentPath();
@@ -11,6 +12,13 @@ MainWindow::MainWindow(QWidget *parent)
     ui->lineResultPath->setText(fileFullPath+QDir::separator()+"test.xml");
     fileCnt=0;
     dirCnt=0;
+
+    //treeview
+    QStringList headers;
+    headers<<"Files"<<"Names";
+    treeModel->setColumnCount(2);
+    treeModel->setHorizontalHeaderLabels(headers);
+    ui->treeView->setModel(treeModel);
 }
 
 MainWindow::~MainWindow()
@@ -21,7 +29,8 @@ MainWindow::~MainWindow()
 void MainWindow::log(QString str)
 {
     qDebug()<<str;
-    ui->textResult->appendPlainText(str);
+    ui->statusbar->clearMessage();
+    ui->statusbar->showMessage(str,10000);
 }
 
 void MainWindow::findAllFiles(QString dirPath)
@@ -35,6 +44,8 @@ void MainWindow::findAllFiles(QString dirPath)
         }
         else if(fileInfo.isDir()){
             findAllFiles(fileInfo.filePath());
+            int row=treeModel->rowCount();
+            treeModel->setItem(row+,1,new QStandardItem("asdl"));
             dirCnt++;
         }
         else if(fileInfo.isFile()){
@@ -43,8 +54,7 @@ void MainWindow::findAllFiles(QString dirPath)
             QString crtFilePath = fileInfo.filePath();
             QString content = crtFilePath.remove(basePath+QDir::separator());
             QString title = fileInfo.fileName().split(".").at(0);
-            QString name=title;
-            addFilesNode(isValid,title,name,content);
+            addFilesNode(isValid,title,content);
             fileCnt++;
         }
     }
@@ -87,19 +97,19 @@ bool MainWindow::initXML()
     return true;
 }
 
-bool MainWindow::addFilesNode(bool isValid,QString title,QString name,QString content="test")
+bool MainWindow::addFilesNode(bool isValid,QString title,QString content="test")
 {
     QDomElement root=doc.documentElement();
-    qDebug()<<root.nodeName();
+    //qDebug()<<root.nodeName();
     QDomNodeList nodeList = root.childNodes();
     for(int i=0;i<nodeList.count();i++){
         QDomNode node = nodeList.at(i);
         if(node.nodeName()!="filterSection"){
             continue;
         }
-        qDebug()<<node.nodeName();
+        //qDebug()<<node.nodeName();
         QDomNodeList childList = node.childNodes();
-        qDebug()<<childList.count();
+        //qDebug()<<childList.count();
         for(int j=0;j<childList.count();j++){
             QDomNode child  = childList.at(j);
             if(child.nodeName()=="toc"){
@@ -182,8 +192,11 @@ void MainWindow::on_actionAbout_Qt_triggered()
 void MainWindow::on_buttonGo_clicked()
 {
     if(basePath.isEmpty()) basePath=ui->lineUrl->text();
-    ui->textResult->clear();
     log("Starting initialize xml file content!");
+    if(ui->lineNamespace->text().isEmpty()){
+        QMessageBox::information(this,"Error","Namespace cannot be empty",QMessageBox::Ok);
+        return;
+    }
     initXML();
 
     findAllFiles(ui->lineUrl->text());
@@ -197,9 +210,9 @@ void MainWindow::on_buttonGo_clicked()
 
     bool isOk = generateQch();
     if(isOk){
-        QMessageBox::information(this,tr("Tip"),tr("All operation has been done!\nDo you want to edit it?"),QMessageBox::Ok|QMessageBox::Cancel);
+        QMessageBox::information(this,tr("Tip"),tr("All operation has been done!\nYou need to edit details by yourself."),QMessageBox::Ok);
     }else{
-        QMessageBox::information(this,tr("Warning"),"Error");
+        QMessageBox::information(this,tr("Warning"),"Error in generate xml file.\n",QMessageBox::Ok);
     }
 }
 

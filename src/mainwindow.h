@@ -13,6 +13,8 @@
 #include <QDesktopServices>
 #include <QMessageBox>
 #include <QtXml>
+#include <QTreeView>
+#include <QStandardItemModel>
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -41,7 +43,7 @@ public:
 
     bool addKeywordsNode(QString content);
 
-    bool addFilesNode(bool isValid, QString title, QString name, QString content);
+    bool addFilesNode(bool isValid, QString title, QString content);
 
     bool addTocNode(QString content);
 
@@ -66,5 +68,7 @@ private slots:
 
 private:
     Ui::MainWindow *ui;
+
+    QStandardItemModel *treeModel;
 };
 #endif // MAINWINDOW_H
