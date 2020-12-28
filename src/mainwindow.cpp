@@ -4,16 +4,16 @@
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
-    , treeModel(new QStandardItemModel(ui->treeView))
 {
     ui->setupUi(this);
     fileFullPath = QDir::currentPath();
     ui->lineUrl->setText(fileFullPath);
-    ui->lineResultPath->setText(fileFullPath+QDir::separator()+"test.xml");
+    ui->lineResultPath->setText(fileFullPath+QDir::separator()+"default.xml");
     fileCnt=0;
     dirCnt=0;
 
     //treeview
+    treeModel=new QStandardItemModel(ui->treeView);
     QStringList headers;
     headers<<"Files"<<"Names";
     treeModel->setColumnCount(2);
@@ -41,14 +41,12 @@ void MainWindow::findAllFiles(QString dirPath)
     foreach(QFileInfo fileInfo , fileInfoList){
         if(fileInfo.fileName() == "."||fileInfo.fileName()==".."){
             continue;
-        }
-        else if(fileInfo.isDir()){
+        }else if(fileInfo.isDir()){
             findAllFiles(fileInfo.filePath());
             int row=treeModel->rowCount();
-            treeModel->setItem(row+,1,new QStandardItem("asdl"));
+            treeModel->setItem(row++,1,new QStandardItem("asdl"));
             dirCnt++;
-        }
-        else if(fileInfo.isFile()){
+        }else if(fileInfo.isFile()){
             bool isValid = false;
             if(fileInfo.suffix()=="html") isValid=true;
             QString crtFilePath = fileInfo.filePath();
@@ -156,11 +154,10 @@ bool MainWindow::save2file(QString dstPath)
 
 bool MainWindow::generateQch()
 {
-    QString cmd = QString("qhelpgenerator %1 -o %2")
-            .arg(resultFullPath)
-            .arg(dstFullPath);
+    QStringList cmdList;
+    cmdList<<resultFullPath<<"-o"<<dstFullPath;
     QProcess pro;
-    pro.start(cmd,QProcess::ReadWrite);
+    pro.start("qhelpgenerator",cmdList,QProcess::ReadWrite);
     pro.waitForFinished();
     log(pro.readAllStandardOutput());
 
@@ -189,7 +186,23 @@ void MainWindow::on_actionAbout_Qt_triggered()
     qApp->aboutQt();
 }
 
-void MainWindow::on_buttonGo_clicked()
+void MainWindow::on_btnFolder_clicked()
+{
+    basePath = QFileDialog::getExistingDirectory(this,tr("Open"),fileFullPath);
+    if(basePath.isEmpty()) return;//如果没有选择文件夹就退出
+    ui->lineUrl->setText(basePath);//将获取的文件夹地址显示出来
+}
+
+void MainWindow::on_btnFile_clicked()
+{
+    ui->lineResultPath->clear();
+    QString resultPath = QFileDialog::getOpenFileName(this,tr("Open"),fileFullPath);
+    if(resultPath.isEmpty()) return;//没有选择就退出
+    resultFullPath = resultPath;//全局变量，保存文件的时候会用到
+    ui->lineResultPath->setText(resultPath);//显示在界面上
+}
+
+void MainWindow::on_btnGo_clicked()
 {
     if(basePath.isEmpty()) basePath=ui->lineUrl->text();
     log("Starting initialize xml file content!");
@@ -214,21 +227,4 @@ void MainWindow::on_buttonGo_clicked()
     }else{
         QMessageBox::information(this,tr("Warning"),"Error in generate xml file.\n",QMessageBox::Ok);
     }
-}
-
-void MainWindow::on_buttonOpen_clicked()
-{
-    ui->lineResultPath->clear();
-    QString resultPath = QFileDialog::getOpenFileName(this,tr("Open"),fileFullPath);
-    if(resultPath.isEmpty()) return;//没有选择就退出
-    resultFullPath = resultPath;//全局变量，保存文件的时候会用到
-    ui->lineResultPath->setText(resultPath);//显示在界面上
-}
-
-void MainWindow::on_buttonFolder_clicked()
-{
-    basePath = QFileDialog::getExistingDirectory(this,tr("Open"),fileFullPath);
-    if(basePath.isEmpty()) return;//如果没有选择文件夹就退出
-    ui->lineUrl->setText(basePath);//将获取的文件夹地址显示出来
-    ui->lineResultPath->setText(basePath);//默认*.qch文件输出位置与源文件同位置
 }

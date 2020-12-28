@@ -53,18 +53,13 @@ public:
 
 private slots:
     void on_actionExit_triggered();
-
     void on_actionAbout_triggered();
-
     void on_actionIndex_triggered();
-
     void on_actionAbout_Qt_triggered();
 
-    void on_buttonGo_clicked();
-
-    void on_buttonOpen_clicked();
-
-    void on_buttonFolder_clicked();
+    void on_btnFolder_clicked();
+    void on_btnFile_clicked();
+    void on_btnGo_clicked();
 
 private:
     Ui::MainWindow *ui;

@@ -34,12 +34,16 @@
      <widget class="QLineEdit" name="lineNamespace"/>
     </item>
     <item row="0" column="1" colspan="2">
-     <widget class="QLineEdit" name="lineUrl"/>
+     <widget class="QLineEdit" name="lineUrl">
+      <property name="text">
+       <string>D:/我的坚果云/</string>
+      </property>
+     </widget>
     </item>
     <item row="1" column="3">
-     <widget class="QPushButton" name="buttonOpen">
+     <widget class="QPushButton" name="btnFile">
       <property name="text">
-       <string>Open</string>
+       <string>File</string>
       </property>
      </widget>
     </item>
@@ -61,21 +65,21 @@
      </widget>
     </item>
     <item row="2" column="0">
-     <widget class="QLabel" name="label">
+     <widget class="QLabel" name="labelNamespace">
       <property name="text">
        <string>Namespace</string>
       </property>
      </widget>
     </item>
     <item row="0" column="3">
-     <widget class="QPushButton" name="buttonFolder">
+     <widget class="QPushButton" name="btnFolder">
       <property name="text">
        <string>Folder</string>
       </property>
      </widget>
     </item>
     <item row="2" column="3">
-     <widget class="QPushButton" name="buttonGo">
+     <widget class="QPushButton" name="btnGo">
       <property name="text">
        <string>Go</string>
       </property>
@@ -92,7 +96,7 @@
      <x>0</x>
      <y>0</y>
      <width>639</width>
-     <height>22</height>
+     <height>23</height>
     </rect>
    </property>
    <widget class="QMenu" name="menu_Help">
